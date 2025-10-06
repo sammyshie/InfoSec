@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Markmap - AI工具（Gemini與Cloud CLI）實作與疑難排解</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/markmap-toolbar@0.18/dist/style.css">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden; /* Prevent scrollbars on body */
+      /* Default light background */
+      background: #fff;
+    }
+    svg.markmap {
+      width: 100%;
+      height: 100vh;
+      display: block; /* Ensure SVG takes block space */
+      /* Keep transparent to inherit page background */
+      background: transparent;
+    }
+    /* Dark theme class, matched by the official export */
+    .markmap-dark,
+    .markmap-dark body,
+    .markmap-dark .markmap,
+    .markmap-dark svg.markmap {
+      background: #27272a !important;
+      color: #ffffff !important;
+    }
+    .mm-toolbar-brand {
+      display: none !important;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/markmap-toolbar@0.18"></script>
+  <script>
+    window.markmap = {
+      autoLoader: { 
+        manual: false,
+        toolbar: true 
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/markmap-autoloader@0.18"></script>
+</head>
+<body>
+  <div class="markmap">
+<script type="text/template">
+---
+markmap:
+  maxWidth: 300
+  initialExpandLevel: 2
+---
+
+AI工具（Gemini與Cloud CLI）實作與疑難排解
+# 會議開場
+- 本週時間過得很快（星期三）
+- 夥伴提醒年夜飯菜已開放預訂
+  - 考慮外訂年夜飯的優點：減輕烹飪辛勞、增加互動樂趣（主廚秀、猜謎送紅酒）
+  - 年夜飯價格討論：約9000-14000元CP值較高，20000元太貴
+
+# AI工具與瀏覽器限制
+- 目前常用AI工具：ChatGBT, Gimini, Cloud (皆透過瀏覽器使用)
+- 瀏覽器介面限制：
+  - 內容長度限制 (Token限制、GUI視窗框架)
+  - 頻繁中斷 (需手動點擊「繼續」或切換新對話)
+  - 單一檔案生成，互動深度有限 (如Canvas)
+  - 前後端程式生成需手動操作與指導
+- 解決方案：使用SDK (軟體開發套件) 和 CLI (命令列介面) 打破限制
+  - 目的：生成更長程式、多頁簡報、更深層互動、直接生成檔案
+  - 介面類型：SDK (程式碼呼叫), CLI (命令列操作)
+
+# Gemini 實作與疑難排解
+## 環境準備
+- 建立專屬資料夾 (例如：`GIMINI`)
+- 安裝 PowerShell (推薦使用，比傳統CMD更穩定)
+  - 下載並安裝MSI套件 (目前版本7.5.3)
+  - 搜尋 `PowerShell` 啟動
+- 安裝/重新安裝 Python 3.12 (推薦版本，確保勾選「Add Python to PATH」)
+  - 透過 `winget install Python.Python.3.12` 指令安裝
+  - 移除舊版Python (若有多版本或安裝有問題)
+- 取得 Gemini API Key
+  - 前往 Google AI Studio 平台
+  - 建立新的 API Key (舊Key可能導致失敗)
+  - 將 API Key 複製並儲存 (例如：記事本)
+
+## Gemini SDK 實作
+- 設定 API Key
+  - PowerShell: `$env:GOOGLE_API_KEY="你的API_KEY"` (使用 `aks` 設為全域)
+  - CMD: `set GOOGLE_API_KEY="你的API_KEY"`
+- 建立並啟動虛擬環境
+  - 建立: `python -m venv .venv`
+  - 啟動 (PowerShell): `.".venv
+Scripts
+Activate.ps1"`
+  - 啟動 (CMD): `.".venv
+Scripts
+activate.bat"`
+- 安裝 Gemini SDK 套件
+  - `pip install google-generativeai`
+- 應用範例
+  - 測試 AI 環境是否成功 (建立Python檔 `test_gemini.py` 並執行)
+  - 建立 AI 聊天機器人 (Python檔 `chatbot.py`)
+    - 程式碼中模型建議改為 `gemini-1.5-flash` (1.5-pro可能受限或不穩定)
+  - 圖片理解 (多模態應用)
+    - 安裝圖片處理套件: `pip install Pillow`
+    - 準備圖片: 找一張圖片並命名為 `test.jpg` 放入資料夾
+    - 建立 Python 檔 `image_test.py` 進行圖片分析 (模型改為 `gemini-1.5-flash`)
+
+## Gemini CLI 實作
+- 建立並啟動虛擬環境 (同SDK步驟)
+- 安裝 Gemini CLI 套件
+  - `pip install google-generativeai[cli]` 或 `pip install google-generativeai --upgrade --force-reinstall` (若需全域安裝)
+- 設定 API Key (同SDK步驟，確保全域設定)
+- 應用範例
+  - 測試 CLI 功能: `gemini --help` 或 `python -m google.generativeai --help`
+  - 單次提問: `gemini prompt "請用繁體中文寫一首春天的短詩"` (若`gemini`指令無效，嘗試 `python -m google.generativeai prompt ...`)
+  - 互動式聊天: `gemini chat`
+  - 文件摘要: `gemini prompt "請幫我摘要這份文件" --file document.pdf`
+  - 執行 Python 程式: 建立 `cli_script.py` 並執行 `python cli_script.py`
+  - 指定模型: `gemini prompt "解釋什麼叫做量子電腦" --model gemini-1.5-pro`
+
+## Gemini 疑難排解總結
+- API Key 問題：建議每次使用新的 API Key，避免使用舊的或重複使用的 Key。
+- Python 環境問題：確保 Python 3.12 正確安裝並加入全域路徑，虛擬環境正確啟動。
+- 模型版本問題：`gemini-1.5-flash` 在實作中表現較穩定，`gemini-1.5-pro` 有時會失敗。
+- 指令執行問題：若 `gemini` 指令無效，嘗試 `python -m google.generativeai` 前綴。
+- 套件安裝問題：若提示缺少模組，手動安裝對應套件 (如 `Pillow`)。
+
+# Cloud CLI 實作 (付費推薦)
+- 特點：穩定、功能強大，但需付費 (按Token計費)
+- 環境準備：
+  - 建立新的資料夾 (例如：`Cloud`)
+  - 需有付費的 Cloud API Key (或有限額度的免費帳號)
+- 安裝 Cloud CLI 套件：
+  - `pip install anthropic --user` (直接全域安裝，安裝過程較簡潔)
+- 啟動與測試：
+  - 測試版本: `claude --version`
+  - 啟動 CLI: `claude`
+  - 首次啟動會詢問是否信任資料夾 (沙盒模式)，選擇 `Yes`
+  - 首次使用會要求輸入 API Key (若未設定)
+- 應用範例 (互動式對話)
+  - 分析資料夾內容: `請分析這個資料夾內的內容`
+  - 生成互動式簡報 (HTML/CSS/JS 技術呈現)
+    - 範例指令: `請製作一份標題為「為何高中職老師想要辭職的現狀探討」的互動式簡報，共10頁，包含封面、頁碼、左右跳頁按鈕，並具備漂亮的背景與動畫效果。`
+    - 簡報檔案會直接生成在當前資料夾，無需下載。
+    - 可進一步要求整合圖片 (會嘗試呼叫外部API如Unsplash載入圖片)。
+  - 檔案管理：
+    - 刪除資料夾內所有檔案: `請將資料夾內所有檔案刪除` (會保留Cloud自身安裝文件)
+- 部署：
+  - 使用 Netlify 平台部署生成的網頁簡報 (拖曳資料夾即可上線)
+  - 可自訂網址
+- 退出：
+  - 務必使用 `Ctrl+C` 連按兩次來安全退出 Cloud CLI，避免下次啟動異常。
+
+# 總結與比較
+- **Gemini (免費):**
+  - 優點：免費使用
+  - 缺點：安裝與使用過程較繁瑣，穩定性有時不佳，API Key和模型版本可能導致問題，對話長度有時受限。
+- **Cloud (付費):**
+  - 優點：安裝簡單，操作流暢，功能強大且穩定，可生成複雜互動式內容 (如多頁簡報)，直接在資料夾內管理檔案，對話長度限制較少。
+  - 缺點：需付費 (按Token計費)，但個人使用體驗更佳。
+- **CLI/SDK 介面優勢：**
+  - 突破瀏覽器介面限制，實現更深層次的互動與客製化。
+  - 檔案直接生成與管理，提高工作效率。
+- **未來展望：** AI 工具仍在快速發展中，功能與穩定性會持續更新，需保持學習與適應。
+
+# 閉幕
+- 感謝亮亮主任的精彩分享
+- 提醒大家填寫回饋表單
+- 錄影將盡快整理並分享
+- 宅主任意外刷卡付費 Cloud，考慮未來舉辦 Cloud 專題研習
+</script>
+  </div>
+</body>
+</html>
+    
